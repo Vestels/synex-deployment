@@ -1,0 +1,64 @@
+name: synex-services-develop
+
+services:
+  synex-eureka-service:
+    build:
+      context: "../synex-eureka-server/"
+      dockerfile: Dockerfile
+    container_name: synex_eureka_service_container
+    restart: unless-stopped
+    env_file:
+      - "../synex-eureka-server/.env.local"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  synex-api-gateway-service:
+    build:
+      context: "../synex-api-gateway-service/"
+      dockerfile: Dockerfile
+    container_name: synex_api_gateway_service_container
+    restart: unless-stopped
+    env_file:
+      - "../synex-api-gateway-service/.env.local"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      synex-eureka-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  synex-user-service:
+    build:
+      context: "../synex-user-service/"
+      dockerfile: Dockerfile
+    container_name: synex_user_service_container
+    restart: unless-stopped
+    env_file:
+      - "../synex-user-service/.env.local"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      # SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/user_db
+    ports:
+      - "8081:8081"
+    depends_on:
+      synex-eureka-service:
+        condition: service_healthy
+      synex-api-gateway-service:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
