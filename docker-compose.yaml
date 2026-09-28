@@ -1,3 +1,4 @@
 include:
   - docker-compose.database.dev.yaml
   - docker-compose.services.dev.yaml
+  - docker-compose.client.dev.yaml

@@ -1,0 +1,17 @@
+name: synex-client-develop
+
+services:
+  synex-client:
+    build:
+      context: "../synex-client/"
+      dockerfile: Dockerfile
+    container_name: synex_client_container
+    restart: unless-stopped
+    env_file:
+      - "../synex-client/.env.local"
+      - "../synex-client/.env.docker"
+    ports:
+      - "3000:3000"
+    depends_on:
+      synex-user-service:
+        condition: service_healthy

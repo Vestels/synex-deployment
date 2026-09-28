@@ -10,10 +10,10 @@ Example:
 
     projects/
     ├── synex-deployment/
-    ├── synex-eureka-server/
-    ├── synex-api-gateway-service/
+    ├── synex-client/
     ├── synex-user-service/
-    └── synex-deployment/
+    ├── synex-api-gateway-service/
+    └── synex-eureka-server/
 
 Before starting the infrastructure, make sure the `.env.local` files in the individual service repositories are created and configured based on their respective `.env.example` files.
 
